@@ -8,26 +8,27 @@
 #
 
 library(shiny)
-
-# Define UI for application that draws a histogram
 shinyUI(fluidPage(
-  
-  # Application title
-  titlePanel("Old Faithful Geyser Data"),
-  
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-       sliderInput("bins",
-                   "Number of bins:",
-                   min = 1,
-                   max = 50,
-                   value = 30)
-    ),
-    
-    # Show a plot of the generated distribution
-    mainPanel(
-       plotOutput("distPlot")
+    titlePanel("Predicting Ozone Pollution level from Air Temperature"),
+    sidebarLayout(
+        sidebarPanel(
+            p("This page uses the R standard airquality data to 
+              build two prediction models for the level of Ozone in the
+              atmosphere based on the air temperature.  The first model is a simple
+              linear model.  The second model is a logistic model (S-shaped curve) 
+              that is computed using a nonlinear least-squares technique.") ,
+            p("Choose a temperature to see the level of ozone predicted by each model"),
+            sliderInput("sliderTemp", "What temperature is it?", 58, 105, value = 72),
+            checkboxInput("showModel1", "Show/Hide Linear Model", value = TRUE),
+            checkboxInput("showModel2", "Show/Hide Logistic (S-curve) Model", value = TRUE)
+        ),
+
+        mainPanel(
+            plotOutput("plot1"),
+            h3("Predicted Ozone Level from Linear Model:"),
+            h3(textOutput("pred1")),
+            h3("Predicted Ozone Level from Logistic (S-curve) Model:"),
+            h3(textOutput("pred2"))
+        )
     )
-  )
 ))

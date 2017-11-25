@@ -8,15 +8,114 @@ output: ioslides_presentation
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(shiny)
+library(dplyr)
+library(shiny)
+library(stats)
+data("airquality")
+```
 
 ## Introduction
+This project demonstrates a logistic regression model and compares it to a simple linear regression model.  
 
-
-## Data selection
+The data used is the standard R airquality dataset.  This datset contains measurements of ozone levels and relevant weather parameters.  For this demonstration, I show the impact of air temperature on ozone. 
 
 ## Model creation
 
-## Using the tool
+Two models were created:
 
-## Expected outputs
+```{r}
+    model1 <- lm(Ozone ~ Temp, data = airquality)
+
+
+```
+
+* A linear model $y = \alpha + \beta x$, where $\alpha$ and $\beta$ are calculated from the data.  For the airquality data, $\alpha =$ `r model1$coefficients[1]` and $\beta =$ `r  model1$coefficients[2]`.
+
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+values <- getInitial(Ozone ~ SSlogis(Temp, alpha, xmid, scale), 
+                     data = airquality)
+ alpha <- as.numeric(values[1])  #alpha
+beta <- as.numeric(values[2] / values[3]) #beta = xmid / scale
+gamma <- as.numeric(1 / values[3]) # gamma = 1 / scale
+```
+
+* A logistic model $y = \frac{\alpha}{1 + e^{\beta - \gamma t}}$ where $\alpha$, $\beta$, and $\gamma$ are calculated from the data.  For the airquality data, $\alpha =$ `r alpha`, $\beta =$ `r beta`, and $\gamma =$ `r gamma`.
+
+## Demonstration Program
+
+The demonstration program can be found at <https://dlkiskis.shinyapps.io/KiskisDataProductsFinal/>
+
+A graph of the data is shown on the right-side of the page.  The lines representing the two models are shown.  
+
+You can interact with the page using the controls on the left side.  You can choose the temperature.  When you do that, the red and blue dots will move to show the predicted ozone level at that temperature, based on each model. 
+
+You can also choose individually whether you want the model lines to be displayed.  
+
+## Example Output
+This is an example graph from the demonstration when the temperature is chosen to be 90 degrees.
+```{r}
+    a = alpha
+    b = beta
+    g = gamma
+    
+    tempInput <- 90
+    model1 <- lm(Ozone ~ Temp, data = airquality)
+    model2 <- nls(Ozone ~ alpha/(1+exp(beta - gamma*Temp)), data = airquality, 
+                  start = c(alpha = a, beta = b, gamma = g))
+    
+    model1pred <- predict(model1, newdata = data.frame(Temp = tempInput))
+
+    
+    model2pred <-  predict(model2, newdata = data.frame(Temp = tempInput))
+    
+        plot(
+            airquality$Temp,
+            airquality$Ozone,
+            xlab = "Air Ambient Temperature",
+            ylab = "Ozone level",
+            bty = "n",
+            pch = 16,
+            xlim = c(58, 105),
+            ylim = c(0, 175)
+        )
+
+            abline(model1, col = "red", lwd = 2)
+
+            model2lines <- predict(model2, newdata = data.frame(
+                Temp = 58:105
+            ))
+            lines(58:105,
+                  model2lines,
+                  col = "blue",
+                  lwd = 2)
+    
+        
+        legend(
+            "topright",
+            c("Linear Model Prediction", "Logistic Model Prediction"),
+            pch = 16,
+            col = c("red", "blue"),
+            bty = "n",
+            cex = 1.2
+        )
+        points(
+            tempInput,
+            model1pred,
+            col = "red",
+            pch = 16,
+            cex = 2
+        )
+        points(
+            tempInput,
+            model2pred,
+            col = "blue",
+            pch = 16,
+            cex = 2
+        )
+
+    
+```
 
