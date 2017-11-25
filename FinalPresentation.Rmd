@@ -1,0 +1,22 @@
+---
+title: "Data Products Final Presentation"
+author: "Daniel Kiskis"
+date: "November 23, 2017"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+
+## Data selection
+
+## Model creation
+
+## Using the tool
+
+## Expected outputs
+
